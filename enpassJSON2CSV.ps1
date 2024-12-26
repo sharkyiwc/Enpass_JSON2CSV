@@ -88,7 +88,12 @@ $nomFichier = [System.IO.Path]::GetFileNameWithoutExtension($fichierJson)
 $dossierSortie = [System.IO.Path]::GetDirectoryName($fichierJson)
 $nomSortie = "${dossierSortie}\${date}_${nomFichier}.csv"
 
-# Export to CSV
-$resultats | Export-Csv -Path $nomSortie -NoTypeInformation -Encoding UTF8
+# Export to CSV UTF-8-BOM
+# $resultats | Export-Csv -Path $nomSortie -NoTypeInformation -Encoding UTF8
+
+# Export to CSV in UTF-8 (without BOM)
+$resultats | Export-Csv -Path $nomSortie -NoTypeInformation
+$utf8NoBom = New-Object System.Text.UTF8Encoding $false
+[System.IO.File]::WriteAllLines($nomSortie, [System.IO.File]::ReadAllLines($nomSortie), $utf8NoBom)
 
 Write-Host "Export completed: $nomSortie" -ForegroundColor Green
